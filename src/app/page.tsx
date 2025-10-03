@@ -63,16 +63,16 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 p-6 backdrop-blur-md bg-slate-900/20 border-b border-white/5">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-4">
-                        <div className="w-8 h-8 bg-slate-700 rounded-full flex items-center justify-center overflow-hidden border-2 border-slate-600 hover:border-slate-500 transition-colors relative">
+                        <div className="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center overflow-hidden border-2 border-slate-600 hover:border-slate-500 transition-colors relative">
               {!imageError ? (
-                <Image 
-                  src="/profile-picture.jpg" 
-                  alt="Brian Cheruiyot" 
-                  width={32}
-                  height={32}
-                  className="w-full h-full object-cover"
-                  onError={() => setImageError(true)}
-                />
+                              <Image 
+                src="/profile-picture.jpg" 
+                alt="Brian Cheruiyot" 
+                width={40}
+                height={40}
+                className="w-full h-full object-cover"
+                onError={() => setImageError(true)}
+              />
               ) : (
                 <span className="text-white font-semibold text-sm">BC</span>
               )}
@@ -498,25 +498,30 @@ export default function Home() {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-light mb-12 text-white">Let&apos;s Build Something Amazing</h2>
           <p className="text-lg sm:text-xl text-slate-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Ready to transform your trading systems or build the next big fintech solution? 
-            Let&apos;s discuss how we can work together.
+            Looking for a skilled full-stack developer? I&apos;m open to opportunities across all industries and ready to bring your ideas to life.
           </p>
           
           <div className="grid md:grid-cols-3 gap-6 mb-12 max-w-3xl mx-auto">
             <div className="p-4 rounded-xl bg-slate-900/30 backdrop-blur-sm border border-slate-700/50">
-              <div className="text-2xl mb-2">🚀</div>
-              <h3 className="text-white font-medium mb-1">Fast Delivery</h3>
-              <p className="text-slate-400 text-sm">Most projects completed within 2-4 weeks</p>
+              <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center mb-2">
+                <span className="text-blue-300 font-bold text-sm">FS</span>
+              </div>
+              <h3 className="text-white font-medium mb-1">Full-Stack Skills</h3>
+              <p className="text-slate-400 text-sm">Frontend, backend, databases, and deployment</p>
             </div>
             <div className="p-4 rounded-xl bg-slate-900/30 backdrop-blur-sm border border-slate-700/50">
-              <div className="text-2xl mb-2">💡</div>
-              <h3 className="text-white font-medium mb-1">Expert Solutions</h3>
-              <p className="text-slate-400 text-sm">Specialized in trading & fintech systems</p>
+              <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center mb-2">
+                <span className="text-green-300 font-bold text-sm">QD</span>
+              </div>
+              <h3 className="text-white font-medium mb-1">Quality Development</h3>
+              <p className="text-slate-400 text-sm">Clean code, best practices, and thorough testing</p>
             </div>
             <div className="p-4 rounded-xl bg-slate-900/30 backdrop-blur-sm border border-slate-700/50">
-              <div className="text-2xl mb-2">🎯</div>
-              <h3 className="text-white font-medium mb-1">Results Driven</h3>
-              <p className="text-slate-400 text-sm">Focused on measurable business impact</p>
+              <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center mb-2">
+                <span className="text-purple-300 font-bold text-sm">AR</span>
+              </div>
+              <h3 className="text-white font-medium mb-1">Any Role</h3>
+              <p className="text-slate-400 text-sm">Open to diverse opportunities and challenges</p>
             </div>
           </div>
           
