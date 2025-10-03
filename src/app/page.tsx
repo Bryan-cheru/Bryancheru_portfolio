@@ -24,37 +24,43 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white overflow-hidden relative">
-      {/* Node Network Background */}
-      <NodeNetwork />
+      {/* Node Network Background - Fixed positioning for hero section */}
+      <div className="fixed inset-0 z-0">
+        <NodeNetwork />
+      </div>
       
-      {/* Animated background */}
-      <div className="fixed inset-0 opacity-40 pointer-events-none">
+      {/* Animated background - with improved blending */}
+      <div className="fixed inset-0 opacity-30 pointer-events-none" style={{ mixBlendMode: 'multiply' }}>
         <div 
-          className="absolute w-96 h-96 rounded-full blur-3xl transition-all duration-500 ease-out"
+          className="absolute w-96 h-96 rounded-full blur-3xl transition-all duration-700 ease-out"
           style={{
             left: mousePosition.x - 192,
             top: mousePosition.y - 192,
-            background: 'radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 80%)',
+            transform: `translate3d(0, 0, 0)`, // Force hardware acceleration
           }}
         />
         <div 
           className="absolute top-1/4 right-1/4 w-72 h-72 rounded-full blur-3xl animate-pulse"
           style={{
-            background: 'radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 80%)',
+            transform: `translate3d(0, 0, 0)`,
           }}
         />
         <div 
           className="absolute bottom-1/4 left-1/4 w-80 h-80 rounded-full blur-3xl animate-pulse"
           style={{
-            background: 'radial-gradient(circle, rgba(6, 182, 212, 0.25) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 80%)',
             animationDelay: '700ms',
+            transform: `translate3d(0, 0, 0)`,
           }}
         />
         <div 
           className="absolute top-3/4 right-1/3 w-64 h-64 rounded-full blur-2xl animate-pulse"
           style={{
-            background: 'radial-gradient(circle, rgba(236, 72, 153, 0.2) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(236, 72, 153, 0.12) 0%, transparent 80%)',
             animationDelay: '1000ms',
+            transform: `translate3d(0, 0, 0)`,
           }}
         />
       </div>
@@ -63,25 +69,11 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 p-6 backdrop-blur-md bg-slate-900/20 border-b border-white/5">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center overflow-hidden border-2 border-slate-600 hover:border-slate-500 transition-colors relative">
-              {!imageError ? (
-                              <Image 
-                src="/profile-picture.jpg" 
-                alt="Brian Cheruiyot" 
-                width={40}
-                height={40}
-                className="w-full h-full object-cover"
-                onError={() => setImageError(true)}
-              />
-              ) : (
-                <span className="text-white font-semibold text-sm">BC</span>
-              )}
-            </div>
             <div className="hidden lg:block">
               <LiveStats />
             </div>
           </div>
-          <div className="hidden md:flex space-x-8 text-sm">
+          <div className="hidden md:flex space-x-8 text-lg">
             <a href="#work" className="text-slate-300 hover:text-white transition-colors duration-300 font-medium">Work</a>
             <a href="#projects" className="text-slate-300 hover:text-white transition-colors duration-300 font-medium">Projects</a>
             <a href="#contact" className="text-slate-300 hover:text-white transition-colors duration-300 font-medium">Contact</a>
@@ -125,37 +117,61 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className={`min-h-screen flex items-center justify-center px-6 pt-20 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-        <div className="text-center max-w-5xl mx-auto relative z-10">
-          <div className="mb-8">
-            <span className="inline-block px-4 py-2 bg-white/5 border border-white/10 rounded-full text-sm mb-8 backdrop-blur-sm">
+      <section className={`h-screen flex items-center justify-center px-6 pt-20 pb-8 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div className="text-center max-w-5xl mx-auto relative z-20">
+          {/* Large Profile Picture */}
+          <div className="mb-8 flex justify-center">
+            <div className="w-32 h-32 md:w-40 md:h-40 bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-500 p-1 rounded-full shadow-2xl shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 hover:scale-105">
+              <div className="w-full h-full bg-slate-800 rounded-full flex items-center justify-center overflow-hidden">
+                {!imageError ? (
+                  <Image 
+                    src="/profile-picture.jpg" 
+                    alt="Brian Cheruiyot" 
+                    width={160}
+                    height={160}
+                    className="w-full h-full object-cover scale-110"
+                    onError={() => setImageError(true)}
+                    priority
+                  />
+                ) : (
+                  <span className="text-white font-bold text-3xl md:text-4xl">BC</span>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          <div className="mb-6">
+            <span className="inline-block px-4 py-2 bg-green-500/10 border border-green-500/30 rounded-full text-sm text-green-400 backdrop-blur-sm animate-pulse">
               Available for hire
             </span>
           </div>
-          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-light mb-4 tracking-tight leading-tight">
+          
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light mb-4 tracking-tight leading-tight">
             Brian Cheruiyot
           </h1>
-          <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-light mb-8 tracking-tight leading-tight text-slate-200">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light mb-6 tracking-tight leading-tight text-slate-200">
             Full-Stack Developer
           </h2>
-          <p className="text-lg sm:text-xl md:text-2xl text-slate-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Building scalable web applications with modern technologies. 
-            Experienced in React, Next.js, Node.js, Python, and cloud deployment.
+          <p className="text-base sm:text-lg md:text-xl text-slate-300 mb-8 max-w-2xl mx-auto leading-relaxed">
+            I craft digital experiences that solve real problems. From interactive frontends 
+            to robust backends, I build applications that users love and businesses depend on.
           </p>
-          <div className="flex justify-center space-x-6 mb-16">
+          
+          <div className="flex justify-center space-x-6 mb-12">
             <a href="https://github.com/Bryan-cheru" target="_blank" 
-               className="group p-3 border border-slate-600 rounded-full hover:border-white/50 transition-all duration-300 hover:scale-110">
+               className="group p-3 border border-slate-600 rounded-full hover:border-white/50 transition-all duration-300 hover:scale-110 hover:bg-white/5">
               <Github size={20} className="group-hover:text-white transition-colors" />
             </a>
             <a href="https://www.linkedin.com/in/bryancheru" target="_blank"
-               className="group p-3 border border-slate-600 rounded-full hover:border-white/50 transition-all duration-300 hover:scale-110">
+               className="group p-3 border border-slate-600 rounded-full hover:border-white/50 transition-all duration-300 hover:scale-110 hover:bg-white/5">
               <Linkedin size={20} className="group-hover:text-white transition-colors" />
             </a>
             <a href="mailto:briancheruiyot501@gmail.com"
-               className="group p-3 border border-slate-600 rounded-full hover:border-white/50 transition-all duration-300 hover:scale-110">
+               className="group p-3 border border-slate-600 rounded-full hover:border-white/50 transition-all duration-300 hover:scale-110 hover:bg-white/5">
               <Mail size={20} className="group-hover:text-white transition-colors" />
             </a>
           </div>
+          
           <div className="animate-bounce">
             <div className="w-6 h-10 border-2 border-white/30 rounded-full mx-auto">
               <div className="w-1 h-3 bg-white/60 rounded-full mx-auto mt-2 animate-pulse"></div>
@@ -165,7 +181,7 @@ export default function Home() {
       </section>
 
       {/* Experience Section */}
-      <section id="work" className="pt-16 pb-32 px-6 relative">
+      <section id="work" className="pt-8 pb-16 px-6 relative">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-light mb-20 text-center">Selected Work</h2>
           <div className="space-y-16">
@@ -173,7 +189,7 @@ export default function Home() {
             <div className="group relative p-8 rounded-2xl border border-slate-700/50 hover:border-slate-600/70 transition-all duration-500 backdrop-blur-xl bg-slate-900/50 hover:bg-slate-800/60 shadow-xl shadow-slate-950/50">
               <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-6">
                 <div>
-                  <h3 className="text-2xl font-semibold mb-2 text-white group-hover:text-blue-300 transition-colors">Founder & AI Trading Researcher</h3>
+                  <h3 className="text-2xl font-semibold mb-2 text-white group-hover:text-blue-300 transition-colors">Founder & Full-Stack Developer</h3>
                   <p className="text-blue-400 text-lg font-medium">Tana Trading Labs</p>
                 </div>
                 <span className="text-slate-400 flex items-center gap-2 mt-2 md:mt-0 text-sm">
@@ -182,8 +198,9 @@ export default function Home() {
                 </span>
               </div>
               <p className="text-slate-300 text-lg leading-relaxed">
-                Founded startup focused on building full-stack web applications and exploring fintech solutions. 
-                Developed end-to-end applications using modern frameworks, APIs, and databases while honing development expertise.
+                Built full-stack web applications from concept to deployment. Architected REST APIs with Node.js, 
+                developed responsive React interfaces, and implemented real-time features using WebSockets. 
+                Managed cloud infrastructure on AWS and optimized application performance for 1000+ concurrent users.
               </p>
             </div>
 

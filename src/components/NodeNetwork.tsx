@@ -23,6 +23,7 @@ interface Connection {
 const NodeNetwork = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const mousePositionRef = useRef({ x: 0, y: 0 }); // Use ref instead of state
   const nodesRef = useRef<Node[]>([]);
   const connectionsRef = useRef<Connection[]>([]);
   const animationRef = useRef<number>(0);
@@ -35,9 +36,23 @@ const NodeNetwork = () => {
       }
     };
 
+    const handleMouseMove = (e: MouseEvent) => {
+      if (canvasRef.current) {
+        const rect = canvasRef.current.getBoundingClientRect();
+        mousePositionRef.current = {
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top
+        };
+      }
+    };
+
     updateDimensions();
     window.addEventListener('resize', updateDimensions);
-    return () => window.removeEventListener('resize', updateDimensions);
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('resize', updateDimensions);
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
   }, []);
 
   useEffect(() => {
@@ -50,23 +65,49 @@ const NodeNetwork = () => {
       api: { color: '#F59E0B', label: 'API', size: 8 }
     };
 
-    // Initialize nodes with tech stack positioning
-    const nodes: Node[] = [
-      // Frontend cluster
-      { id: 1, x: dimensions.width * 0.2, y: dimensions.height * 0.3, vx: 0, vy: 0, connections: [2, 4], type: 'frontend', data: 'React' },
-      { id: 2, x: dimensions.width * 0.25, y: dimensions.height * 0.4, vx: 0, vy: 0, connections: [1, 3, 5], type: 'frontend', data: 'Next.js' },
-      { id: 3, x: dimensions.width * 0.3, y: dimensions.height * 0.2, vx: 0, vy: 0, connections: [2, 6], type: 'frontend', data: 'TypeScript' },
-      
-      // Backend cluster  
-      { id: 4, x: dimensions.width * 0.5, y: dimensions.height * 0.5, vx: 0, vy: 0, connections: [1, 5, 7, 8], type: 'backend', data: 'Node.js' },
-      { id: 5, x: dimensions.width * 0.6, y: dimensions.height * 0.4, vx: 0, vy: 0, connections: [2, 4, 9], type: 'api', data: 'REST API' },
-      { id: 6, x: dimensions.width * 0.55, y: dimensions.height * 0.3, vx: 0, vy: 0, connections: [3, 7], type: 'api', data: 'GraphQL' },
-      
-      // Database cluster
-      { id: 7, x: dimensions.width * 0.7, y: dimensions.height * 0.6, vx: 0, vy: 0, connections: [4, 6, 8], type: 'database', data: 'MongoDB' },
-      { id: 8, x: dimensions.width * 0.8, y: dimensions.height * 0.5, vx: 0, vy: 0, connections: [4, 7, 9], type: 'database', data: 'Redis' },
-      { id: 9, x: dimensions.width * 0.75, y: dimensions.height * 0.7, vx: 0, vy: 0, connections: [5, 8], type: 'backend', data: 'Python' },
+    // Initialize nodes with distributed positioning for smooth movement
+    const nodes: Node[] = [];
+    const nodeData = [
+      { type: 'frontend', data: 'React', color: '#61DAFB' },
+      { type: 'frontend', data: 'Next.js', color: '#000000' },
+      { type: 'frontend', data: 'TypeScript', color: '#3178C6' },
+      { type: 'backend', data: 'Node.js', color: '#339933' },
+      { type: 'api', data: 'REST API', color: '#FF6B35' },
+      { type: 'api', data: 'GraphQL', color: '#E10098' },
+      { type: 'database', data: 'MongoDB', color: '#47A248' },
+      { type: 'database', data: 'PostgreSQL', color: '#336791' },
+      { type: 'backend', data: 'Python', color: '#3776AB' },
+      { type: 'backend', data: 'Docker', color: '#2496ED' },
+      { type: 'api', data: 'AWS', color: '#FF9900' },
+      { type: 'frontend', data: 'Tailwind', color: '#38BDF8' },
+      { type: 'frontend', data: 'Vite', color: '#646CFF' },
+      { type: 'api', data: 'Vercel', color: '#000000' },
+      { type: 'database', data: 'Redis', color: '#DC382D' },
+      { type: 'database', data: 'Firebase', color: '#FFCA28' }
     ];
+
+    // Create nodes with proper spacing and initial positions
+    nodeData.forEach((nodeInfo, i) => {
+      const angle = (i / nodeData.length) * Math.PI * 2;
+      const radius = Math.min(dimensions.width, dimensions.height) * 0.3;
+      const centerX = dimensions.width * 0.5;
+      const centerY = dimensions.height * 0.5;
+      
+      nodes.push({
+        id: i + 1,
+        x: centerX + Math.cos(angle) * radius + (Math.random() - 0.5) * 100,
+        y: centerY + Math.sin(angle) * radius + (Math.random() - 0.5) * 100,
+        vx: (Math.random() - 0.5) * 0.1, // Much slower initial velocity
+        vy: (Math.random() - 0.5) * 0.1,
+        connections: [
+          ((i + 1) % nodeData.length) + 1,
+          ((i + 3) % nodeData.length) + 1,
+          ((i + 5) % nodeData.length) + 1
+        ],
+        type: nodeInfo.type as 'frontend' | 'backend' | 'database' | 'api',
+        data: nodeInfo.data
+      });
+    });
 
     // Create connections
     const connections: Connection[] = [];
@@ -99,14 +140,50 @@ const NodeNetwork = () => {
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      time += 0.016; // 60fps
+      time += 0.0003; // Ultra slow motion - barely perceptible movement
 
-      // Update node positions with subtle movement
-      nodesRef.current.forEach(node => {
-        node.vx += (Math.sin(time + node.id) * 0.1 - node.vx) * 0.05;
-        node.vy += (Math.cos(time + node.id * 1.5) * 0.1 - node.vy) * 0.05;
+      // Update node positions with smooth movement and mouse interaction
+      nodesRef.current.forEach((node, index) => {
+        // Store original positions for boundary checking
+        const originalX = dimensions.width * (0.05 + (index % 4) * 0.3);
+        const originalY = dimensions.height * (0.1 + Math.floor(index / 4) * 0.25);
+        
+        // Mouse interaction with smoother physics
+        const dx = mousePositionRef.current.x - node.x;
+        const dy = mousePositionRef.current.y - node.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const maxDistance = 120;
+        
+        if (distance < maxDistance && distance > 0) {
+          const force = (maxDistance - distance) / maxDistance * 0.02; // Minimal force
+          node.vx += (dx / distance) * force * 0.005; // Very slow mouse response
+          node.vy += (dy / distance) * force * 0.005;
+        }
+        
+        // Smooth orbital motion around original position - extremely slow
+        const orbitRadius = 15 + (index % 3) * 8;
+        const orbitSpeed = 1 + (index % 5) * 0.3; // Very slow orbital motion
+        const orbitX = originalX + Math.cos(time * orbitSpeed + index) * orbitRadius;
+        const orbitY = originalY + Math.sin(time * orbitSpeed * 0.8 + index) * orbitRadius;
+        
+        // Gentle attraction to orbit path - ultra slow response
+        const targetDx = orbitX - node.x;
+        const targetDy = orbitY - node.y;
+        node.vx += targetDx * 0.0005; // Extremely gentle attraction
+        node.vy += targetDy * 0.0005;
+        
+        // Apply velocity with very strong damping for ultra slow movement
+        node.vx *= 0.998;
+        node.vy *= 0.998;
         node.x += node.vx;
         node.y += node.vy;
+        
+        // Boundary enforcement to prevent nodes from going off-screen
+        const margin = 50;
+        if (node.x < margin) { node.x = margin; node.vx = Math.abs(node.vx); }
+        if (node.x > dimensions.width - margin) { node.x = dimensions.width - margin; node.vx = -Math.abs(node.vx); }
+        if (node.y < margin) { node.y = margin; node.vy = Math.abs(node.vy); }
+        if (node.y > dimensions.height - margin) { node.y = dimensions.height - margin; node.vy = -Math.abs(node.vy); }
       });
 
       // Draw connections with data flow animation
@@ -187,14 +264,19 @@ const NodeNetwork = () => {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [dimensions]);
+  }, [dimensions]); // Remove mouse position from dependencies to prevent animation restart
 
   return (
     <div className="absolute inset-0 pointer-events-none">
       <canvas
         ref={canvasRef}
-        className="w-full h-full opacity-60"
-        style={{ width: '100%', height: '100%' }}
+        className="w-full h-full opacity-70"
+        style={{ 
+          width: '100%', 
+          height: '100%',
+          mixBlendMode: 'screen',
+          filter: 'blur(0.5px)'
+        }}
       />
     </div>
   );
